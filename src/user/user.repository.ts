@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { User } from './user.interface';
 import { UserMapper } from './user.mapper';
-import { DatabaseService } from 'src/database/database.service';
+import { DatabaseService } from 'src/common/database/database.service';
 
 @Injectable()
 export class UserRepository {

@@ -1,10 +1,22 @@
 // src/user/user-mapper.ts
 
 import { User } from "./user.interface";
-import { UserEntity } from '../database/types'
+import { UserEntity } from '../common/database/types'
 
 
 export class UserMapper {
+
+  static user(obj:any):User{
+    return{
+      id: obj.id,
+      name: obj.name,
+      email: obj.email,
+      password: obj.password_hash,
+      status: obj.status
+    }
+
+  }
+
   static toUser(row: UserEntity): User {
     return {
       id: row.user_id,
@@ -14,6 +26,7 @@ export class UserMapper {
       status: row.status
     };
   }
+  
   static toUserEntity(user: User): UserEntity {
     return {
       user_id: user.id,
