@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { User } from './user.interface';
 import { UserMapper } from './user.mapper';
-import { DatabaseService } from 'src/common/database/database.service';
+import { DatabaseProvider } from 'src/common/database/sql/database.provider';
 
 @Injectable()
 export class UserRepository {
@@ -13,7 +13,7 @@ export class UserRepository {
     .executeTakeFirst();
     if(!row) throw new Error("update failed:No match condition.");
   }
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(private readonly databaseService: DatabaseProvider) {}
   async findUserById(id: string): Promise<User | null> {
     const row = await this.databaseService.db
       .selectFrom('user')

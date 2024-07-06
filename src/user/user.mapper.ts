@@ -1,7 +1,7 @@
 // src/user/user-mapper.ts
 
 import { User } from "./user.interface";
-import { UserEntity } from '../common/database/types'
+import { UserEntity } from '../common/database/sql/types'
 
 
 export class UserMapper {

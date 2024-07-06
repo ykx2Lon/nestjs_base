@@ -1,9 +1,11 @@
 import { Body, Controller, Get, HttpException, Param, Post, Query } from '@nestjs/common';
 import { RegisterUserDto } from './register.dto';
 import { AuthService } from './auth.service';
+import { RedisProvider } from 'src/common/database/redis/redis.provider';
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService, private readonly redisService:RedisProvider
+  ) {}
 
   @Post('register')
   async registerUser(@Body() user: RegisterUserDto) {
@@ -17,7 +19,7 @@ export class AuthController {
   }
 
   @Get('test')
-  async testJWT() {
-    return this.authService.generateJwtByUserId('aaaa');
+  async testRedis() {
+    return this.redisService.client.get('a');
   }
 }

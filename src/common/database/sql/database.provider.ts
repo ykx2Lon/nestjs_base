@@ -5,7 +5,7 @@ import { createPool } from 'mysql2';
 import { DB } from './types';
 
 @Injectable()
-export class DatabaseService {
+export class DatabaseProvider {
   private readonly database: Kysely<DB>;
   constructor(private configService: ConfigService) {
     const dialect = new MysqlDialect({
