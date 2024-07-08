@@ -1,8 +1,8 @@
-import { HttpException } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { RedisClientType, createClient } from 'redis';
 
 
-
+@Injectable()
 export class RedisProvider {
   private redis_client: RedisClientType;
 

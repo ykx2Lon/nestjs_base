@@ -7,7 +7,7 @@ import { DB } from './types';
 @Injectable()
 export class DatabaseProvider {
   private readonly database: Kysely<DB>;
-  constructor(private configService: ConfigService) {
+  constructor(private readonly configService: ConfigService) {
     const dialect = new MysqlDialect({
       pool: createPool(process.env.DATABASE_URL),
     });

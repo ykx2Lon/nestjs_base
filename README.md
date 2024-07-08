@@ -39,5 +39,5 @@ src
 
 # 當前任務:實作login、session部分
 1. 測試redis(O)
-2. 測試express-session
+2. 測試express-session(ing)
 3. 整合express-session 和 redis

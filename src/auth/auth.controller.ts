@@ -1,9 +1,13 @@
-import { Body, Controller, Get, HttpException, Param, Post, Query } from '@nestjs/common';
-import { RegisterUserDto } from './register.dto';
-import { AuthService } from './auth.service';
+import { Body, Controller, Get, Post, Query, Req } from '@nestjs/common';
+import { Request } from 'express';
 import { RedisProvider } from 'src/common/database/redis/redis.provider';
+import { AuthService } from './auth.service';
+import { LoginDataDto } from './login.dto';
+import { RegisterUserDto } from './register.dto';
+
 @Controller('auth')
 export class AuthController {
+    static a = 0;
   constructor(private readonly authService: AuthService, private readonly redisService:RedisProvider
   ) {}
 
@@ -18,8 +22,25 @@ export class AuthController {
     return await this.authService.verifyUser(token);
   }
 
+  @Post('login')
+  async login(@Body() loginData: LoginDataDto,@Req() req: Request) {
+    console.log(loginData)
+    console.log(req.sessionID)
+
+    return "login success";
+    
+  }
+
+
   @Get('test')
-  async testRedis() {
+  async testRedis(@Req() req: Request) {
+    console.log("before:"+req.session.customData)
+    if(!req.session.customData)
+        req.session.customData= 'hihihi'+AuthController.a;
+    AuthController.a++;
+    console.log("after:"+req.session.customData)
+    console.log(req.sessionID)
+
     return this.redisService.client.get('a');
   }
 }
