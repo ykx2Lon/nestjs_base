@@ -24,9 +24,9 @@ export class AuthController {
 
   @Post('login')
   async login(@Body() loginData: LoginDataDto,@Req() req: Request) {
-    console.log(loginData)
-    console.log(req.sessionID)
-
+    req.session.isAuthed=false;
+    await this.authService.login(loginData.id, loginData.password);
+    req.session.isAuthed=true;
     return "login success";
     
   }
@@ -34,13 +34,9 @@ export class AuthController {
 
   @Get('test')
   async testRedis(@Req() req: Request) {
-    console.log("before:"+req.session.customData)
-    if(!req.session.customData)
-        req.session.customData= 'hihihi'+AuthController.a;
-    AuthController.a++;
-    console.log("after:"+req.session.customData)
-    console.log(req.sessionID)
+    
+    console.log(req.session.isAuthed)
+    
 
-    return this.redisService.client.get('a');
   }
 }

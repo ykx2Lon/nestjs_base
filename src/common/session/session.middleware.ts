@@ -8,11 +8,11 @@ export class SessionMiddleware implements NestMiddleware {
   constructor(private readonly redisProvider: RedisProvider) {}
   use(req: any, res: any, next: () => void) {
     session({
-      store: new RedisStore({ client: this.redisProvider.client }),
+      store: new RedisStore({ client: this.redisProvider.client,ttl:Number(process.env.TTL)}),
       secret: process.env.SESSION_SECRECT,
       resave: true,
       saveUninitialized: true,
-      cookie: { secure: false},
+      cookie: { secure: false,maxAge:Number(process.env.TTL)*1000},
     })(req, res, next);
   }
 }

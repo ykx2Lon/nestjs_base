@@ -1,13 +1,13 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import { User } from 'src/user/user.interface';
-import * as jsonwebtoken from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
-import { UserService } from 'src/user/user.service';
-import { MailService } from 'src/common/mail/mail.service';
 import { promises as fs } from 'fs';
-import * as path from 'path';
+import * as jsonwebtoken from 'jsonwebtoken';
 import { JwtPayload } from 'jsonwebtoken';
+import * as path from 'path';
+import { MailService } from 'src/common/mail/mail.service';
+import { User } from 'src/user/user.interface';
 import { UserMapper } from 'src/user/user.mapper';
+import { UserService } from 'src/user/user.service';
 @Injectable()
 export class AuthService {
   constructor(
@@ -43,7 +43,6 @@ export class AuthService {
     } catch (e) {
       throw new HttpException('token過期，請重新登入系統並重寄驗證信', 401);
     }
-    //TODO 檢查是否已驗證過。已驗證和未驗證要顯示不同的東西
     let id = UserMapper.user(userId).id;
     let user = await this.userService.findById(id);
     if (!user || !user.status)
@@ -56,11 +55,20 @@ export class AuthService {
     }
   }
 
+  async login(userId:string, password:string){
+    let user:User = await this.userService.findById(userId);
+    if(!user) throw new HttpException("使用者不存在",401);
+    let result = await bcrypt.compare( password,user.password) 
+    if(!result) throw new HttpException("密碼錯誤",401);
+  }
+
+
+
   private async hashPassword(password: string): Promise<string> {
     return await bcrypt.hash(password, this.saltRounds);
   }
 
-  generateJwtByUserId(userId: string): string {
+  private generateJwtByUserId(userId: string): string {
     let jwt = jsonwebtoken.sign(UserMapper.user
       ({ id: userId }), process.env.JWT_SECRECT, {
       expiresIn: this.jwtExpiresIn,
