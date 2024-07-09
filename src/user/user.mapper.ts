@@ -1,7 +1,7 @@
 // src/user/user-mapper.ts
 
+import { UserEntity } from '../common/database/sql/types';
 import { User } from "./user.interface";
-import { UserEntity } from '../common/database/sql/types'
 
 
 export class UserMapper {
@@ -27,13 +27,19 @@ export class UserMapper {
     };
   }
   
-  static toUserEntity(user: User): UserEntity {
-    return {
+  static toUserEntity(user: Partial<User>): Partial<UserEntity> {
+    let obj= {
       user_id: user.id,
       user_name: user.name,
       email: user.email,
       password_hash: user.password,
       status: user.status
     };
+    Object.keys(obj).forEach(key => {
+      if (obj[key] === undefined ||obj[key] === null) {
+        delete obj[key];
+      }
+    });
+    return obj;
   }
 }
