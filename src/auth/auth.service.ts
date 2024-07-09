@@ -38,14 +38,13 @@ export class AuthService {
   }
 
   async verifyUser(jwt: string):Promise<string> {
-    let userId: string | JwtPayload;
+    let objWithId: string | JwtPayload;
     try {
-      userId = jsonwebtoken.verify(jwt, process.env.JWT_SECRECT);
+      objWithId = jsonwebtoken.verify(jwt, process.env.JWT_SECRECT);
     } catch (e) {
       throw new HttpException('token過期，請重新登入系統並重寄驗證信', 401);
     }
-    let id = UserMapper.user(userId).id;
-    let user = await this.userService.findById(id);
+    let user = await this.userService.findById((objWithId as Partial<User>).id);
     if (!user || !user.status)
       throw new HttpException('資料有誤，請聯繫系統管理員', 500);
     if (user.status == 'UNVERIFIED') {
@@ -70,8 +69,9 @@ export class AuthService {
   }
 
   private generateJwtByUserId(userId: string): string {
+    let obj:Partial<User> = { id: userId }
     let jwt = jsonwebtoken.sign(
-      UserMapper.user({ id: userId }),
+      obj,
       process.env.JWT_SECRECT,
       {
         expiresIn: this.jwtExpiresIn,

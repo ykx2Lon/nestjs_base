@@ -5,18 +5,6 @@ import { User } from "./user.interface";
 
 
 export class UserMapper {
-
-  static user(obj:any):User{
-    return{
-      id: obj.id,
-      name: obj.name,
-      email: obj.email,
-      password: obj.password_hash,
-      status: obj.status
-    }
-
-  }
-
   static toUser(row: UserEntity): User {
     return {
       id: row.user_id,
