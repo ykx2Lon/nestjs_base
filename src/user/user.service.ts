@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common";
-import { UserRepository } from "./user.repository";
 import { User } from "./user.interface";
+import { UserRepository } from "./user.repository";
 
 @Injectable()
 export class UserService{
     constructor(private readonly userRespository: UserRepository){}
-    
+
     async findById(id:string):Promise<User|null>{
         return this.userRespository.findUserById(id);
     }

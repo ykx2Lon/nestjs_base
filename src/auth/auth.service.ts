@@ -18,7 +18,7 @@ export class AuthService {
   private cachedFile = {};
   private readonly mailTemplatePath = '../../html/register.template.html';
   private readonly jwtExpiresIn = '1h';
-  async registerUser(user: User) {
+  async registerUser(user: User):Promise<string> {
     user.status = 'UNVERIFIED';
     user.password = await this.hashPassword(user.password);
     //TODO email unique check
@@ -34,9 +34,10 @@ export class AuthService {
       '驗證您的電子信箱',
       this.cachedFile[filePath].replace('{{token}}', jwt),
     );
+    return '建立成功，請去信箱進行帳號驗證';
   }
 
-  async verifyUser(jwt: string) {
+  async verifyUser(jwt: string):Promise<string> {
     let userId: string | JwtPayload;
     try {
       userId = jsonwebtoken.verify(jwt, process.env.JWT_SECRECT);
@@ -55,24 +56,27 @@ export class AuthService {
     }
   }
 
-  async login(userId:string, password:string){
-    let user:User = await this.userService.findById(userId);
-    if(!user) throw new HttpException("使用者不存在",401);
-    let result = await bcrypt.compare( password,user.password) 
-    if(!result) throw new HttpException("密碼錯誤",401);
+  async loginCheck(userId: string, pwd: string):Promise<Omit<User, 'password'>> {
+    let user: User = await this.userService.findById(userId);
+    if (!user) throw new HttpException('使用者不存在', 401);
+    let result = await bcrypt.compare(pwd, user.password);
+    if (!result) throw new HttpException('密碼錯誤', 401);
+    const { password, ...userData } = user;
+    return userData;
   }
-
-
 
   private async hashPassword(password: string): Promise<string> {
     return await bcrypt.hash(password, this.saltRounds);
   }
 
   private generateJwtByUserId(userId: string): string {
-    let jwt = jsonwebtoken.sign(UserMapper.user
-      ({ id: userId }), process.env.JWT_SECRECT, {
-      expiresIn: this.jwtExpiresIn,
-    });
+    let jwt = jsonwebtoken.sign(
+      UserMapper.user({ id: userId }),
+      process.env.JWT_SECRECT,
+      {
+        expiresIn: this.jwtExpiresIn,
+      },
+    );
     return jwt;
   }
 

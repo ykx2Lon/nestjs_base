@@ -1,6 +1,5 @@
 import { Body, Controller, Get, Post, Query, Req } from '@nestjs/common';
 import { Request } from 'express';
-import { RedisProvider } from 'src/common/database/redis/redis.provider';
 import { AuthService } from './auth.service';
 import { LoginDataDto } from './login.dto';
 import { RegisterUserDto } from './register.dto';
@@ -8,13 +7,12 @@ import { RegisterUserDto } from './register.dto';
 @Controller('auth')
 export class AuthController {
     static a = 0;
-  constructor(private readonly authService: AuthService, private readonly redisService:RedisProvider
+  constructor(private readonly authService: AuthService
   ) {}
 
   @Post('register')
   async registerUser(@Body() user: RegisterUserDto) {
-    await this.authService.registerUser(user);
-    return '建立成功，請去信箱進行帳號驗證';
+    return await this.authService.registerUser(user);
   }
 
   @Get('verify')
@@ -23,19 +21,17 @@ export class AuthController {
   }
 
   @Post('login')
-  async login(@Body() loginData: LoginDataDto,@Req() req: Request) {
-    req.session.isAuthed=false;
-    await this.authService.login(loginData.id, loginData.password);
-    req.session.isAuthed=true;
+  async login(@Body() loginData: LoginDataDto,@Req() req: Request) { 
+     let user= await this.authService.loginCheck(loginData.id, loginData.password);
+     req.session.user = user;
     return "login success";
     
   }
 
-
   @Get('test')
   async testRedis(@Req() req: Request) {
-    
-    console.log(req.session.isAuthed)
+
+    console.log(req.session.user)
     
 
   }

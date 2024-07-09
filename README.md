@@ -28,19 +28,20 @@ src
 2. 7/1:完成user的基本model、repository、service(O)
 3. 7/3:實作使用者註冊(O)+信箱驗證-使用jwt(O)
 4. 7/3:上傳至github(O)
-5. 7/6:實作login、session部分
-6. 7/7:刪除帳號/停用帳號功能
+5. 7/6:實作login、session部分(O)
+6. 7/7:刪除帳號/停用帳號功能()
 
 # 待解決問題
-7. 解決其他地方出錯，sql rollback的問題
-8. 解決sql造成的crash問題:先停用register的id檢查，再註冊重複的id確認結果
-9. 若已註冊過但token過期，應該請對方重新註冊還是重發驗證信
-10. 改成登入後才使用儲存session功能(register、login必須是被session store middleware排除的route)
+7. 解決其他地方出錯，sql rollback的問題(目前該專案沒有需要rollback部分)
+8. 改用passport，實現google登入功能
+9. 解決sql造成的crash問題:先停用register的id檢查，再註冊重複的id確認結果
+10. 若已註冊過但jwt過期，應在使用者登入時提示重寄驗證信(前端)
+11. 確認要是沒有驗證的話可以使用哪些功能
+12. 試著使用工廠函式建立service/repository
 
 # 當前任務:實作login
 1. 基礎login(O)
 2. session保存期限(O)
-3. 未登入/session過期自動跳轉。
-   - 使用middleware實現，拋出401。
-   - 跳轉部分由前端處理。
-4. 改用passport，實現google登入功能
+3. 未登入/session過期自動跳轉。(O)
+   - 使用middleware實現，拋出401。(O)
+   - 跳轉部分由前端處理。(不在此專案範圍內)

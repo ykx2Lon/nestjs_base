@@ -10,9 +10,9 @@ export class SessionMiddleware implements NestMiddleware {
     session({
       store: new RedisStore({ client: this.redisProvider.client,ttl:Number(process.env.TTL)}),
       secret: process.env.SESSION_SECRECT,
-      resave: true,
-      saveUninitialized: true,
-      cookie: { secure: false,maxAge:Number(process.env.TTL)*1000},
+      resave: false,
+      saveUninitialized: false,
+      cookie: { secure: false, maxAge:Number(process.env.TTL)*1000 },
     })(req, res, next);
   }
 }
