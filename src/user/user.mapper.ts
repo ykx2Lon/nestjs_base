@@ -24,7 +24,7 @@ export class UserMapper {
       status: user.status
     };
     Object.keys(obj).forEach(key => {
-      if (obj[key] === undefined ||obj[key] === null) {
+      if (obj[key] === undefined ||obj[key] === null ||obj[key].isEmpty()) {
         delete obj[key];
       }
     });

@@ -1,39 +1,33 @@
 import {
-    Body,
-    Controller,
-    Get,
-    HttpException,
-    Param,
-    Put,
-    Req,
-    UsePipes,
-    ValidationPipe,
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  Param,
+  Put,
+  Req,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { IsEmail, IsOptional } from 'class-validator';
 import { Request } from 'express';
 import {
-    IsUserId,
-    IsUserName,
+  IsUserId,
+  IsUserName,
 } from 'src/common/decorators/basic-data-validation.decorator';
+import { UserService } from './user.service';
 
-class UserIdDto {
-  @IsUserId({ message: 'Invalid userId.' })
-  id: string;
-}
 
 class UserUpdateDto {
   @IsOptional()
   @IsUserName({ message: 'Invalid userName.' })
   name: string;
-  //TODO email加上isUnique
-  @IsOptional()
-  @IsEmail({}, { message: 'Invalid email.' })
-  email: string;
 }
 
 @Controller('user')
 export class UserController {
+  constructor(private readonly userService:UserService){}
   @Get(':id')
   getUser(
     @Param('id') id: string,
@@ -46,14 +40,14 @@ export class UserController {
 
   @Put(':id')
   @UsePipes(new ValidationPipe({ whitelist: true })) //過濾雜訊
-  updateUser(
+  updateUserData(
     @Param('id') id: string,
     @Req() req: Request,
     @Body() body: UserUpdateDto,
   ) {
     if (id != req.session.user.id)
       throw new HttpException('Access Denied', 403);
-    //TODO updateUserNameAndEmail
+    this.userService.updateUserDataExceptAuthById(id,body)
     return req.session.user;
   }
 }

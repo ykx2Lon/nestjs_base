@@ -1,36 +1,29 @@
 import { applyDecorators } from '@nestjs/common';
 import {
-  IsString,
-  MinLength,
-  MaxLength,
-  ValidationOptions,
   IsNotEmpty,
+  IsString,
+  Matches,
+  MaxLength,
+  MinLength,
+  ValidationOptions,
 } from 'class-validator';
+import { Regex } from '../regex/regex';
 // 基本資料DTO常用驗證
 export function IsUserId(validationOptions?: ValidationOptions) {
   return applyDecorators(
-    IsString(validationOptions),
-    MinLength(4, validationOptions),
-    MaxLength(12, validationOptions),
-    IsNotEmpty(validationOptions),
+    Matches(Regex.USER_ID, validationOptions),
   );
 }
 
 export function IsUserName(validationOptions?: ValidationOptions) {
   return applyDecorators(
-    IsString(validationOptions),
-    MinLength(1, validationOptions),
-    MaxLength(20, validationOptions),
-    IsNotEmpty(validationOptions),
+    Matches(Regex.USER_NAME, validationOptions),
   );
 }
 
 export function IsUserUnhashPassword(validationOptions?: ValidationOptions) {
   return applyDecorators(
-    IsString(validationOptions),
-    MinLength(4, validationOptions),
-    MaxLength(12, validationOptions),
-    IsNotEmpty(validationOptions),
+    Matches(Regex.USER_PASSWORD, validationOptions),
   );
 }
 

@@ -21,5 +21,10 @@ export class UserService{
     async updateStautsByUserId(id:string,newStatus:string){
         this.userRespository.updateByUserId(id, {status:newStatus});
     }
+    
+    async updateUserDataExceptAuthById(id:string,
+        userData:Partial<Omit<User,'id'|'password'|'email'|'status'>>){
+        this.userRespository.updateByUserId(id,userData);
+    }
 
 }
