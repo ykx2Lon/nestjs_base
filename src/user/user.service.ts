@@ -6,12 +6,16 @@ import { UserRepository } from "./user.repository";
 export class UserService{
     constructor(private readonly userRespository: UserRepository){}
 
-    async findById(id:string):Promise<User|null>{
-        return this.userRespository.findUserBy({id:id});
+    async findByIdWithPassword(id:string):Promise<User>|null{
+        return this.userRespository.findUserById(id);
     }
 
-    async findByEmail(email:string):Promise<User|null>{
-        return this.userRespository.findUserBy({email:email});
+    async findById (id:string):Promise<Omit<User,'password'>|null>{
+        return this.userRespository.findUserExcludePasswordBy({id:id});
+    }
+
+    async findByEmail(email:string):Promise<Omit<User,'password'>|null>{
+        return this.userRespository.findUserExcludePasswordBy({email:email});
     }
 
     async createUser(user: User): Promise<any | null> {
@@ -19,12 +23,13 @@ export class UserService{
     }
 
     async updateStautsByUserId(id:string,newStatus:string){
-        this.userRespository.updateByUserId(id, {status:newStatus});
+        this.userRespository.updateByUserId(id, {authStatus:newStatus});
     }
     
     async updateUserDataExceptAuthById(id:string,
         userData:Partial<Omit<User,'id'|'password'|'email'|'status'>>){
-        this.userRespository.updateByUserId(id,userData);
+        await this.userRespository.updateByUserId(id,userData);
+        
     }
 
 }

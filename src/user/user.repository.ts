@@ -15,7 +15,7 @@ export class UserRepository {
     userFields: Partial<Omit<User, 'user_id'>>,
   ): Promise<void> {
     let tableField = UserMapper.toUserEntity(userFields);
-    await this.databaseService.db
+    let a = await this.databaseService.db
       .updateTable('user')
       .set(tableField)
       .where('user_id', '=', id)
@@ -23,21 +23,27 @@ export class UserRepository {
   }
 
   // 通用的 find user by...
-  async findUserBy(conditions: Partial<User>): Promise<User | null> {
+  async findUserExcludePasswordBy(conditions: Partial<User>): Promise<Omit<User,'password'> | null> {
     let tableCondition = UserMapper.toUserEntity(conditions);
     let query = this.databaseService.db.selectFrom('user').selectAll();
     for (const [column, value] of Object.entries(tableCondition)) {
       query = query.where(column as keyof UserEntity, '=', value);
     }
     const row = await query.executeTakeFirst();
+    return row ? UserMapper.toNoPasswordUser(row) : null;
+  }
+
+  async findUserById(id:string): Promise<User | null> {
+    let query = this.databaseService.db.selectFrom('user').where('user_id','=',id).selectAll();
+    const row = await query.executeTakeFirst();
     return row ? UserMapper.toUser(row) : null;
   }
 
-  async createUser(user: User): Promise<any | null> {
+  async createUser(user: Omit<User,'password'>): Promise<any | null> {
     const { insertId } = await this.databaseService.db
       .insertInto('user')
       .values(UserMapper.toUserEntity(user))
       .executeTakeFirstOrThrow();
-    return await this.findUserBy({id:String(insertId!)});
+    return await this.findUserExcludePasswordBy({id:String(insertId!)});
   }
 }

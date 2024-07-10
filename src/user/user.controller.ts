@@ -9,12 +9,10 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { plainToClass } from 'class-transformer';
-import { IsEmail, IsOptional } from 'class-validator';
+import { IsOptional } from 'class-validator';
 import { Request } from 'express';
 import {
-  IsUserId,
-  IsUserName,
+  IsUserName
 } from 'src/common/decorators/basic-data-validation.decorator';
 import { UserService } from './user.service';
 
@@ -40,14 +38,15 @@ export class UserController {
 
   @Put(':id')
   @UsePipes(new ValidationPipe({ whitelist: true })) //過濾雜訊
-  updateUserData(
+  async updateUserData(
     @Param('id') id: string,
     @Req() req: Request,
     @Body() body: UserUpdateDto,
   ) {
     if (id != req.session.user.id)
       throw new HttpException('Access Denied', 403);
-    this.userService.updateUserDataExceptAuthById(id,body)
+    await this.userService.updateUserDataExceptAuthById(id,body)
+    req.session.user = {...req.session.user,...body}
     return req.session.user;
   }
 }

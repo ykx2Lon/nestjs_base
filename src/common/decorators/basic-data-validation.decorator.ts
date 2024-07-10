@@ -1,11 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
 import {
-  IsNotEmpty,
-  IsString,
   Matches,
-  MaxLength,
-  MinLength,
-  ValidationOptions,
+  ValidationOptions
 } from 'class-validator';
 import { Regex } from '../regex/regex';
 // 基本資料DTO常用驗證
