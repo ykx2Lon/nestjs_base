@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { DatabaseProvider } from 'src/common/database/sql/database.provider';
 import { UserEntity } from 'src/common/database/sql/types';
+import { StrictOmit } from 'ts-essentials';
 import { User } from './user.interface';
 import { UserMapper } from './user.mapper';
 
@@ -12,7 +13,7 @@ export class UserRepository {
   // 通用的 update user by id
   async updateByUserId(
     id: string,
-    userFields: Partial<Omit<User, 'user_id'>>,
+    userFields: Partial<StrictOmit<User, 'id'>>,
   ): Promise<void> {
     let tableField = UserMapper.toUserEntity(userFields);
     let a = await this.databaseService.db
@@ -23,14 +24,14 @@ export class UserRepository {
   }
 
   // 通用的 find user by...
-  async findUserExcludePasswordBy(conditions: Partial<User>): Promise<Omit<User,'password'> | null> {
+  async findUserExcludePasswordBy(conditions: Partial<User>): Promise<StrictOmit<User,'password'> | null> {
     let tableCondition = UserMapper.toUserEntity(conditions);
     let query = this.databaseService.db.selectFrom('user').selectAll();
     for (const [column, value] of Object.entries(tableCondition)) {
       query = query.where(column as keyof UserEntity, '=', value);
     }
     const row = await query.executeTakeFirst();
-    return row ? UserMapper.toNoPasswordUser(row) : null;
+    return row ? UserMapper.toUser(row) : null;
   }
 
   async findUserById(id:string): Promise<User | null> {

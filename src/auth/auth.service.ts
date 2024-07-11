@@ -7,6 +7,7 @@ import * as path from 'path';
 import { MailService } from 'src/common/mail/mail.service';
 import { User } from 'src/user/user.interface';
 import { UserService } from 'src/user/user.service';
+import { StrictOmit } from 'ts-essentials';
 @Injectable()
 export class AuthService {
   constructor(
@@ -19,7 +20,7 @@ export class AuthService {
   private readonly jwtExpiresIn = '1h';
 
 
-  async registerUser(user: Omit<User,'authStatus'>):Promise<string> {
+  async registerUser(user: StrictOmit<User,'authStatus'>):Promise<string> {
     user.password = await this.hashPassword(user.password);
     //TODO email unique check
     const filePath = path.join(__dirname, this.mailTemplatePath);
@@ -54,7 +55,7 @@ export class AuthService {
     }
   }
 
-  async loginCheck(userId: string, pwd: string):Promise<Omit<User, 'password'>> {
+  async loginCheck(userId: string, pwd: string):Promise<StrictOmit<User, 'password'>> {
     let user: User = await this.userService.findByIdWithPassword(userId);
     if (!user) throw new HttpException('使用者不存在', 401);
     let result = await bcrypt.compare(pwd, user.password);

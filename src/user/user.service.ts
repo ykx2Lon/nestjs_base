@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { StrictOmit } from "ts-essentials";
 import { User } from "./user.interface";
 import { UserRepository } from "./user.repository";
 
@@ -10,11 +11,11 @@ export class UserService{
         return this.userRespository.findUserById(id);
     }
 
-    async findById (id:string):Promise<Omit<User,'password'>|null>{
+    async findById (id:string):Promise<StrictOmit<User,'password'>|null>{
         return this.userRespository.findUserExcludePasswordBy({id:id});
     }
 
-    async findByEmail(email:string):Promise<Omit<User,'password'>|null>{
+    async findByEmail(email:string):Promise<StrictOmit<User,'password'>|null>{
         return this.userRespository.findUserExcludePasswordBy({email:email});
     }
 
@@ -27,7 +28,7 @@ export class UserService{
     }
     
     async updateUserDataExceptAuthById(id:string,
-        userData:Partial<Omit<User,'id'|'password'|'email'|'status'>>){
+        userData:Partial<StrictOmit<User,'id'|'password'|'email'|'authStatus'>>){
         await this.userRespository.updateByUserId(id,userData);
         
     }

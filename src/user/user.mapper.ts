@@ -1,6 +1,7 @@
 // src/user/user-mapper.ts
 
 import { Regex } from 'src/common/regex/regex';
+import { StrictOmit } from 'ts-essentials';
 import { UserEntity } from '../common/database/sql/types';
 import { User } from "./user.interface";
 
@@ -15,7 +16,7 @@ export class UserMapper {
       authStatus: row.status
     };
   }
-  static toNoPasswordUser(row: UserEntity): Omit<User,'password'> {
+  static toNoPasswordUser(row: UserEntity): StrictOmit<User,'password'> {
     return {
       id: row.user_id,
       name: row.user_name,
